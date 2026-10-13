@@ -89,7 +89,29 @@ The example uses a module-level counter to simulate a failure on the first attem
 
 Later lessons can introduce cleaner ways to manage workflow state and execution.
 
-## 7. Run the example
+## 7. Testing workflow behavior
+
+The tests in `tests/test_workflow_failures.py` verify both failure handling and successful execution.
+
+They cover:
+
+- A security check that fails on the first attempt and succeeds on the second.
+- Retrying after a temporary failure.
+- Stopping after repeated failures without generating a summary.
+- Passing the expected analysis to the summary generator.
+- Avoiding an unnecessary retry when the security check succeeds immediately.
+
+The tests use `unittest.mock.patch.object()` to replace dependencies temporarily. This allows the workflow's behavior to be tested without relying on the real security check.
+
+Run the focused tests:
+
+```bash
+python -m unittest discover -s tests -p "test_workflow_failures.py" -v
+```
+
+Mocking and more advanced testing techniques are explored separately in Lesson 11.
+
+## Run the example
 
 From the repository root:
 
@@ -97,7 +119,7 @@ From the repository root:
 uv run python 00-python-workflows/workflow_failures.py
 ```
 
-Run the test suite:
+Run the full test suite:
 
 ```bash
 uv run python -m unittest discover -s tests -v

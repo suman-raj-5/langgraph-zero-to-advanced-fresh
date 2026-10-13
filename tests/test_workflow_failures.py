@@ -66,6 +66,39 @@ class TestWorkflowFailures(unittest.TestCase):
         self.assertEqual(mock_check.call_count, 2)
         mock_summary.assert_not_called()
 
+    def test_summary_receives_analysis_after_security_check(self):
+        with patch.object(
+            workflow_failures,
+            "run_security_check",
+            return_value=None,
+        ) as mock_check:
+            with patch.object(
+                workflow_failures,
+                "generate_summary",
+                return_value="Test summary",
+            ) as mock_summary:
+                workflow_failures.run_workflow()
+
+        mock_check.assert_called_once()
+        mock_summary.assert_called_once_with(
+            "Analysis complete for: Fix login validation"
+        )
+
+    def test_workflow_does_not_retry_after_success(self):
+        with patch.object(
+            workflow_failures,
+            "run_security_check",
+            return_value=None,
+        ) as mock_check:
+            with patch.object(
+                workflow_failures,
+                "generate_summary",
+                return_value="Test summary",
+            ):
+                workflow_failures.run_workflow()
+
+        mock_check.assert_called_once()
+
 
 if __name__ == "__main__":
     unittest.main()
